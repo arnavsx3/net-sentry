@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
+    "log"
 
-	"net-sentry/backend/internal/config"
-	"net-sentry/backend/internal/server"
+    "github.com/arnavsx3/net-sentry/backend/internal/config"
+    "github.com/arnavsx3/net-sentry/backend/internal/server"
 )
 
 func main() {
