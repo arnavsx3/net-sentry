@@ -5,8 +5,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"net-sentry/backend/internal/config"
-	"net-sentry/backend/internal/handlers"
+	"github.com/arnavsx3/net-sentry/backend/internal/config"
+	"github.com/arnavsx3/net-sentry/backend/internal/handlers"
 )
 
 type Server struct {
