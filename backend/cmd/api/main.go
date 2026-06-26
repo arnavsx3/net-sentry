@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -34,4 +35,13 @@ func main() {
 	case <-ctx.Done():
 		log.Println("shutdown signal received")
 	}
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
+	defer cancel()
+
+	if err := srv.Shutdown(shutdownCtx); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("NetSentry backend stopped cleanly")
 }
