@@ -1,10 +1,15 @@
 package main
 
 import (
-    "log"
+	"context"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
-    "github.com/arnavsx3/net-sentry/backend/internal/config"
-    "github.com/arnavsx3/net-sentry/backend/internal/server"
+	"github.com/arnavsx3/net-sentry/backend/internal/config"
+	"github.com/arnavsx3/net-sentry/backend/internal/server"
 )
 
 func main() {
