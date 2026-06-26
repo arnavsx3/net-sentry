@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -17,8 +16,22 @@ func main() {
 
 	srv := server.New(cfg)
 
-	log.Printf("starting NetSentry backend on %s", cfg.Port)
-	if err := srv.Run(); err != nil {
-		log.Fatal(err)
+	log.Printf("starting NetSentry backend on port=%s mode=%s", cfg.Port, cfg.GinMode)
+
+	errCh := make(chan error, 1)
+	go func() {
+		errCh <- srv.Start()
+	}()
+
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	select {
+	case err := <-errCh:
+		if err != nil && err != http.ErrServerClosed {
+			log.Fatal(err)
+		}
+	case <-ctx.Done():
+		log.Println("shutdown signal received")
 	}
 }
