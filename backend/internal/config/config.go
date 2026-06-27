@@ -15,12 +15,12 @@ type Config struct {
 }
 
 func Load() Config {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-	}
-
 	return Config{
-		Port: port,
+		Port:            getEnv("PORT", "8080"),
+		GinMode:         getEnv("GIN_MODE", "debug"),
+		ReadTimeout:     getEnvDurationSeconds("HTTP_READ_TIMEOUT_SEC", 10),
+		WriteTimeout:    getEnvDurationSeconds("HTTP_WRITE_TIMEOUT_SEC", 10),
+		ShutdownTimeout: getEnvDurationSeconds("HTTP_SHUTDOWN_TIMEOUT_SEC", 10),
 	}
+}
 }
