@@ -32,3 +32,17 @@ func getEnv(key, fallback string) string {
 
 	return value
 }
+
+func getEnvDurationSeconds(key string, fallback int) time.Duration {
+	raw := os.Getenv(key)
+	if raw == "" {
+		return time.Duration(fallback) * time.Second
+	}
+
+	seconds, err := strconv.Atoi(raw)
+	if err != nil || seconds <= 0 {
+		return time.Duration(fallback) * time.Second
+	}
+
+	return time.Duration(seconds) * time.Second
+}
