@@ -23,4 +23,12 @@ func Load() Config {
 		ShutdownTimeout: getEnvDurationSeconds("HTTP_SHUTDOWN_TIMEOUT_SEC", 10),
 	}
 }
+
+func getEnv(key, fallback string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return fallback
+	}
+
+	return value
 }
