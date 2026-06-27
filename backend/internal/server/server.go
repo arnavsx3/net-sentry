@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 
@@ -10,21 +11,31 @@ import (
 )
 
 type Server struct {
-	engine *gin.Engine
-	port   string
+	httpServer *http.Server
 }
 
 func New(cfg config.Config) *Server {
-	engine := gin.Default()
+	gin.SetMode(cfg.GinMode)
 
-	engine.GET("/health", handlers.HealthCheck)
+	engine := gin.New()
+	engine.Use(gin.Logger(), gin.Recovery())
+
+	engine.GET("/healthz", handlers.HealthCheck)
+	engine.GET("/readyz", handlers.ReadinessCheck)
+
+	api := engine.Group("/api/v1")
+	{
+		api.GET("/health", handlers.HealthCheck)
+	}
+
+	httpServer := &http.Server{
+		Addr:         fmt.Sprintf(":%s", cfg.Port),
+		Handler:      engine,
+		ReadTimeout:  cfg.ReadTimeout,
+		WriteTimeout: cfg.WriteTimeout,
+	}
 
 	return &Server{
-		engine: engine,
-		port:   cfg.Port,
+		httpServer: httpServer,
 	}
-}
-
-func (s *Server) Run() error {
-	return s.engine.Run(fmt.Sprintf(":%s", s.port))
 }
