@@ -9,13 +9,20 @@ import (
 	"syscall"
 
 	"github.com/arnavsx3/net-sentry/backend/internal/config"
+	"github.com/arnavsx3/net-sentry/backend/internal/db"
 	"github.com/arnavsx3/net-sentry/backend/internal/server"
 )
 
 func main() {
 	cfg := config.Load()
 
-	srv := server.New(cfg)
+	dbClient, err := db.New(context.Background(), cfg.DatabaseURL)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer dbClient.Close()
+
+	srv := server.New(cfg, dbClient)
 
 	log.Printf("starting NetSentry backend on port=%s mode=%s", cfg.Port, cfg.GinMode)
 
