@@ -19,8 +19,6 @@
 - Detects:
   - high latency
   - packet loss threshold breaches
-  - route changes
-  - statistical anomalies using z-score
 - Exposes APIs for dashboard queries
 - Pushes live events over WebSockets
 
@@ -32,8 +30,7 @@
   - latency trends
   - packet loss trends
   - active alerts
-  - route path visualization
-  - incident/history timeline
+  - traceroute snapshots
 
 ### Deployment
 - Dockerized services
@@ -47,10 +44,12 @@ These are intentionally excluded unless extra time remains:
 - full enterprise topology auto-discovery
 - SNMP-based discovery
 - deep bandwidth analytics
+- route change detection automation
+- z-score anomaly detection
 - RBAC and multi-user auth
 - Kubernetes deployment
 - complex failure simulation engine
-- advanced ML-based anomaly detection
+- Prometheus and Grafana integration
 
 ## Success Criteria
 
@@ -60,7 +59,7 @@ NetSentry V1 is complete when:
 - backend stores and serves historical data
 - alerts are generated for unhealthy links
 - frontend shows live and historical network health
-- traceroute paths can be viewed and compared
+- traceroute snapshots can be viewed
 - the full system runs locally with Docker Compose
 
 ## Non-Functional Goals
@@ -69,4 +68,4 @@ NetSentry V1 is complete when:
 - readable API contracts
 - basic logging and error handling
 - modular services
-- realistic production-style architecture
+- good resume-level architecture

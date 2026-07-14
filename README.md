@@ -1,27 +1,27 @@
 # NetSentry
 
-NetSentry is a distributed network observability platform built to monitor network health, detect anomalies, visualize routing paths, and provide real-time operational insight into latency, packet loss, and route changes.
+NetSentry is a network observability MVP built to monitor network health, collect active probe telemetry, and provide real-time insight into latency, packet loss, and traceroute results.
 
 ## Goals
 
-NetSentry is designed as a production-grade resume project that demonstrates:
+NetSentry is designed as a resume-focused project that demonstrates:
 
 - distributed systems design
 - Go backend development
 - network telemetry collection
 - time-series data handling
-- alerting and anomaly detection
+- threshold-based alerting
 - real-time dashboards
-- path and topology visualization
+- traceroute inspection
 
 ## Core Features
 
-- Distributed Go agents that run active probes every 30 seconds
+- Go agents that run active probes every 30 seconds
 - Latency and packet loss measurement across configured targets
-- Traceroute collection and route change detection
+- Traceroute collection for route inspection
 - Historical telemetry storage in PostgreSQL
 - Real-time alerting for unhealthy links
-- Basic anomaly detection using statistical baselines
+- Live updates over WebSockets
 - Live dashboard built with Next.js and TypeScript
 - Local deployment with Docker Compose
 
@@ -41,10 +41,6 @@ NetSentry is designed as a production-grade resume project that demonstrates:
 ### Realtime
 - WebSockets
 
-### Observability
-- Prometheus
-- Grafana
-
 ### Deployment
 - Docker
 - Docker Compose
@@ -53,7 +49,7 @@ NetSentry is designed as a production-grade resume project that demonstrates:
 
 ```text
 agent/      Go-based network probe agent
-backend/    Gin API, ingestion, analysis, alerting
+backend/    Gin API, ingestion, storage, alerting
 frontend/   Next.js dashboard
 deploy/     Docker Compose and deployment configs
 docs/       Architecture and scope documents

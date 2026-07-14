@@ -2,9 +2,9 @@
 
 ## Overview
 
-NetSentry follows a distributed telemetry collection model.
+NetSentry follows a simple telemetry collection model for a strong MVP.
 
-Go-based agents run active network probes from different locations and send results to a centralized backend. The backend stores telemetry, analyzes health patterns, generates alerts, and serves real-time and historical data to a web dashboard.
+Go-based agents run active network probes on a schedule and send results to a centralized backend. The backend stores telemetry, applies threshold-based health checks, and serves live and historical data to a web dashboard.
 
 ## High-Level Components
 
@@ -35,15 +35,12 @@ Responsibilities:
 
 ### 3. Analysis and Alerting
 
-This layer evaluates incoming telemetry.
+This layer evaluates incoming telemetry with simple rules.
 
 Responsibilities:
 
 - detect latency threshold breaches
 - detect packet loss threshold breaches
-- detect route changes between snapshots
-- compute rolling baselines
-- flag anomalies using z-score
 - generate alert records
 
 ### 4. Database
@@ -57,7 +54,6 @@ Expected entities:
 - probe_results
 - traceroute_hops
 - alerts
-- incidents
 
 ### 5. Frontend Dashboard
 
@@ -68,18 +64,7 @@ Responsibilities:
 - show current target health
 - render latency and packet loss charts
 - display alert feed
-- visualize traceroute paths
-- show incident and recovery history
-
-### 6. Platform Observability
-
-NetSentry should observe itself as well.
-
-Responsibilities:
-
-- expose backend metrics for Prometheus
-- visualize internal service metrics in Grafana
-- surface service health status
+- show traceroute snapshots and recent paths
 
 ## Request Flow
 
@@ -87,6 +72,6 @@ Responsibilities:
 2. Agent runs ping and traceroute checks
 3. Agent sends telemetry payload to backend
 4. Backend stores raw results in PostgreSQL
-5. Analysis logic evaluates thresholds and anomalies
-6. Alerts and route changes are recorded
+5. Analysis logic evaluates threshold breaches
+6. Alerts are recorded
 7. Frontend fetches history and receives live updates via WebSockets
