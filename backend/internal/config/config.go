@@ -9,6 +9,7 @@ import (
 type Config struct {
 	Port            string
 	GinMode         string
+	DatabaseURL     string
 	ReadTimeout     time.Duration
 	WriteTimeout    time.Duration
 	ShutdownTimeout time.Duration
@@ -18,6 +19,7 @@ func Load() Config {
 	return Config{
 		Port:            getEnv("PORT", "8080"),
 		GinMode:         getEnv("GIN_MODE", "debug"),
+		DatabaseURL:     getEnv("DATABASE_URL", ""),
 		ReadTimeout:     getEnvDurationSeconds("HTTP_READ_TIMEOUT_SEC", 10),
 		WriteTimeout:    getEnvDurationSeconds("HTTP_WRITE_TIMEOUT_SEC", 10),
 		ShutdownTimeout: getEnvDurationSeconds("HTTP_SHUTDOWN_TIMEOUT_SEC", 10),
