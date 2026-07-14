@@ -11,9 +11,11 @@ import (
 	"github.com/arnavsx3/net-sentry/backend/internal/config"
 	"github.com/arnavsx3/net-sentry/backend/internal/db"
 	"github.com/arnavsx3/net-sentry/backend/internal/server"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	_ = godotenv.Load()
 	cfg := config.Load()
 
 	dbClient, err := db.New(context.Background(), cfg.DatabaseURL)
