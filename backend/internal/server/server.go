@@ -1,9 +1,9 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"net/http"
-	"context"
 
 	"github.com/gin-gonic/gin"
 
@@ -27,6 +27,7 @@ func New(cfg config.Config) *Server {
 	api := engine.Group("/api/v1")
 	{
 		api.GET("/health", handlers.HealthCheck)
+		api.POST("/telemetry", handlers.IngestTelemetry)
 	}
 
 	httpServer := &http.Server{
