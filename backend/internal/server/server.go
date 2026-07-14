@@ -8,21 +8,23 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/arnavsx3/net-sentry/backend/internal/config"
+	"github.com/arnavsx3/net-sentry/backend/internal/db"
 	"github.com/arnavsx3/net-sentry/backend/internal/handlers"
 )
 
 type Server struct {
 	httpServer *http.Server
+	dbClient   *db.Client
 }
 
-func New(cfg config.Config) *Server {
+func New(cfg config.Config, dbClient *db.Client) *Server {
 	gin.SetMode(cfg.GinMode)
 
 	engine := gin.New()
 	engine.Use(gin.Logger(), gin.Recovery())
 
 	engine.GET("/healthz", handlers.HealthCheck)
-	engine.GET("/readyz", handlers.ReadinessCheck)
+	engine.GET("/readyz", handlers.ReadinessCheck(dbClient))
 
 	api := engine.Group("/api/v1")
 	{
@@ -39,6 +41,7 @@ func New(cfg config.Config) *Server {
 
 	return &Server{
 		httpServer: httpServer,
+		dbClient:   dbClient,
 	}
 }
 
