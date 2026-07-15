@@ -24,3 +24,12 @@ type ProbeResult struct {
 	Status     string    `gorm:"not null"`
 	CreatedAt  time.Time `gorm:"not null"`
 }
+
+type TracerouteHop struct {
+	ID            uint      `gorm:"primaryKey"`
+	ProbeResultID uint      `gorm:"not null;index"`
+	HopNumber     int       `gorm:"not null"`
+	Address       string    `gorm:"not null"`
+	RTTMs         float64   `gorm:"not null"`
+	CreatedAt     time.Time `gorm:"not null"`
+}
