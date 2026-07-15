@@ -2,14 +2,17 @@ package db
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type Client struct {
-	Pool *pgxpool.Pool
+	ORM   *gorm.DB
+	sqlDB *sql.DB
 }
 
 func New(ctx context.Context, databaseURL string) (*Client, error) {
@@ -17,38 +20,50 @@ func New(ctx context.Context, databaseURL string) (*Client, error) {
 		return nil, errors.New("DATABASE_URL is required")
 	}
 
-	cfg, err := pgxpool.ParseConfig(databaseURL)
+	orm, err := gorm.Open(postgres.Open(databaseURL), &gorm.Config{})
 	if err != nil {
 		return nil, err
 	}
 
-	cfg.MaxConns = 10
-	cfg.MinConns = 1
-	cfg.MaxConnLifetime = 30 * time.Minute
-	cfg.MaxConnIdleTime = 5 * time.Minute
-
-	pool, err := pgxpool.NewWithConfig(ctx, cfg)
+	sqlDB, err := orm.DB()
 	if err != nil {
 		return nil, err
 	}
+
+	sqlDB.SetMaxOpenConns(10)
+	sqlDB.SetMaxIdleConns(5)
+	sqlDB.SetConnMaxLifetime(30 * time.Minute)
 
 	pingCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
 
-	if err := pool.Ping(pingCtx); err != nil {
-		pool.Close()
+	if err := sqlDB.PingContext(pingCtx); err != nil {
 		return nil, err
 	}
 
-	return &Client{Pool: pool}, nil
+	if err := orm.AutoMigrate(
+		&Agent{},
+		&Target{},
+		&ProbeResult{},
+		&TracerouteHop{},
+	); err != nil {
+		return nil, err
+	}
+
+	return &Client{
+		ORM:   orm,
+		sqlDB: sqlDB,
+	}, nil
 }
 
-func (c *Client) Close() {
-	if c != nil && c.Pool != nil {
-		c.Pool.Close()
+func (c *Client) Close() error {
+	if c == nil || c.sqlDB == nil {
+		return nil
 	}
+
+	return c.sqlDB.Close()
 }
 
 func (c *Client) Ping(ctx context.Context) error {
-	return c.Pool.Ping(ctx)
+	return c.sqlDB.PingContext(ctx)
 }
