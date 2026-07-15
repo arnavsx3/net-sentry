@@ -22,7 +22,9 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer dbClient.Close()
+	defer func() {
+		_ = dbClient.Close()
+	}()
 
 	srv := server.New(cfg, dbClient)
 
