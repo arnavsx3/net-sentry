@@ -10,6 +10,7 @@ import (
 	"github.com/arnavsx3/net-sentry/backend/internal/config"
 	"github.com/arnavsx3/net-sentry/backend/internal/db"
 	"github.com/arnavsx3/net-sentry/backend/internal/handlers"
+	"github.com/arnavsx3/net-sentry/backend/internal/repository"
 )
 
 type Server struct {
@@ -23,13 +24,15 @@ func New(cfg config.Config, dbClient *db.Client) *Server {
 	engine := gin.New()
 	engine.Use(gin.Logger(), gin.Recovery())
 
+	telemetryRepo := repository.NewTelemetryRepository(dbClient)
+
 	engine.GET("/healthz", handlers.HealthCheck)
 	engine.GET("/readyz", handlers.ReadinessCheck(dbClient))
 
 	api := engine.Group("/api/v1")
 	{
 		api.GET("/health", handlers.HealthCheck)
-		api.POST("/telemetry", handlers.IngestTelemetry)
+		api.POST("/telemetry", handlers.IngestTelemetry(telemetryRepo))
 	}
 
 	httpServer := &http.Server{
