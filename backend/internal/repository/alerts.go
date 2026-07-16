@@ -4,28 +4,28 @@ import (
 	"context"
 	"time"
 
+	"gorm.io/gorm"
+
 	"github.com/arnavsx3/net-sentry/backend/internal/db"
 )
 
 type AlertRepository struct {
-	orm interface {
-		WithContext(ctx context.Context) any
-	}
+	orm *gorm.DB
 }
 
 type CurrentAlertItem struct {
-	ID           uint       `json:"id"`
-	TargetHost   string     `json:"target_host"`
-	Type         string     `json:"type"`
-	Severity     string     `json:"severity"`
-	Message      string     `json:"message"`
-	TriggeredAt  time.Time  `json:"triggered_at"`
-	ResolvedAt   *time.Time `json:"resolved_at,omitempty"`
-	ObservedAt   time.Time  `json:"observed_at"`
-	LatencyMs    float64    `json:"latency_ms"`
-	PacketLoss   float64    `json:"packet_loss"`
-	ProbeStatus  string     `json:"probe_status"`
-	ProbeResultID uint      `json:"probe_result_id"`
+	ID            uint       `json:"id"`
+	TargetHost    string     `json:"target_host"`
+	Type          string     `json:"type"`
+	Severity      string     `json:"severity"`
+	Message       string     `json:"message"`
+	TriggeredAt   time.Time  `json:"triggered_at"`
+	ResolvedAt    *time.Time `json:"resolved_at,omitempty"`
+	ObservedAt    time.Time  `json:"observed_at"`
+	LatencyMs     float64    `json:"latency_ms"`
+	PacketLoss    float64    `json:"packet_loss"`
+	ProbeStatus   string     `json:"probe_status"`
+	ProbeResultID uint       `json:"probe_result_id"`
 }
 
 func NewAlertRepository(dbClient *db.Client) *AlertRepository {
@@ -37,10 +37,8 @@ func (r *AlertRepository) GetCurrentAlerts(ctx context.Context, limit int) ([]Cu
 		limit = 50
 	}
 
-	orm := r.orm.(*gorm.DB)
-
 	var alerts []db.Alert
-	if err := orm.WithContext(ctx).
+	if err := r.orm.WithContext(ctx).
 		Preload("Target").
 		Preload("ProbeResult").
 		Where(map[string]any{
