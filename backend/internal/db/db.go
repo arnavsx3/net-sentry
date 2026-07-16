@@ -46,6 +46,7 @@ func New(ctx context.Context, databaseURL string) (*Client, error) {
 		&Target{},
 		&ProbeResult{},
 		&TracerouteHop{},
+		&Alert{},
 	); err != nil {
 		return nil, err
 	}
