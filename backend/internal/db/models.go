@@ -33,3 +33,18 @@ type TracerouteHop struct {
 	RTTMs         float64   `gorm:"not null"`
 	CreatedAt     time.Time `gorm:"not null"`
 }
+
+type Alert struct {
+	ID            uint        `gorm:"primaryKey"`
+	TargetID      uint        `gorm:"not null;index"`
+	ProbeResultID uint        `gorm:"not null;index"`
+	Type          string      `gorm:"not null;index"`
+	Severity      string      `gorm:"not null"`
+	Message       string      `gorm:"not null"`
+	TriggeredAt   time.Time   `gorm:"not null;index"`
+	ResolvedAt    *time.Time  `gorm:"index"`
+	CreatedAt     time.Time   `gorm:"not null"`
+	UpdatedAt     time.Time   `gorm:"not null"`
+	Target        Target      `gorm:"foreignKey:TargetID"`
+	ProbeResult   ProbeResult `gorm:"foreignKey:ProbeResultID"`
+}
