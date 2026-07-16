@@ -33,6 +33,7 @@ func New(cfg config.Config, dbClient *db.Client) *Server {
 	{
 		api.GET("/health", handlers.HealthCheck)
 		api.POST("/telemetry", handlers.IngestTelemetry(telemetryRepo))
+		api.GET("/targets/:host/history", handlers.GetTargetHistory(telemetryRepo))
 	}
 
 	httpServer := &http.Server{
