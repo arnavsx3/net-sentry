@@ -26,6 +26,7 @@ func New(cfg config.Config, dbClient *db.Client) *Server {
 
 	telemetryRepo := repository.NewTelemetryRepository(cfg, dbClient)
 	alertRepo := repository.NewAlertRepository(dbClient)
+	targetRepo := repository.NewTargetRepository(dbClient)
 
 	engine.GET("/healthz", handlers.HealthCheck)
 	engine.GET("/readyz", handlers.ReadinessCheck(dbClient))
@@ -34,6 +35,7 @@ func New(cfg config.Config, dbClient *db.Client) *Server {
 	{
 		api.GET("/health", handlers.HealthCheck)
 		api.POST("/telemetry", handlers.IngestTelemetry(telemetryRepo))
+		api.GET("/targets/current", handlers.GetCurrentTargets(targetRepo))
 		api.GET("/targets/:host/history", handlers.GetTargetHistory(telemetryRepo))
 		api.GET("/alerts/current", handlers.GetCurrentAlerts(alertRepo))
 	}
