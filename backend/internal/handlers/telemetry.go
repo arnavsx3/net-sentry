@@ -44,7 +44,9 @@ func GetTargetHistory(repo *repository.TelemetryRepository) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		host := c.Param("host")
 		if host == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "target host is required"})
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "target host is required",
+			})
 			return
 		}
 
@@ -52,7 +54,9 @@ func GetTargetHistory(repo *repository.TelemetryRepository) gin.HandlerFunc {
 		if raw := c.Query("limit"); raw != "" {
 			parsed, err := strconv.Atoi(raw)
 			if err != nil {
-				c.JSON(http.StatusBadRequest, gin.H{"error": "invalid limit"})
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": "invalid limit",
+				})
 				return
 			}
 			limit = parsed
