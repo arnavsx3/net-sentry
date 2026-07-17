@@ -10,6 +10,7 @@ import (
 	"github.com/arnavsx3/net-sentry/backend/internal/config"
 	"github.com/arnavsx3/net-sentry/backend/internal/db"
 	"github.com/arnavsx3/net-sentry/backend/internal/handlers"
+	"github.com/arnavsx3/net-sentry/backend/internal/realtime"
 	"github.com/arnavsx3/net-sentry/backend/internal/repository"
 )
 
@@ -24,6 +25,9 @@ func New(cfg config.Config, dbClient *db.Client) *Server {
 	engine := gin.New()
 	engine.Use(gin.Logger(), gin.Recovery())
 
+	hub := realtime.NewHub()
+	go hub.Run()
+
 	telemetryRepo := repository.NewTelemetryRepository(cfg, dbClient)
 	alertRepo := repository.NewAlertRepository(dbClient)
 	targetRepo := repository.NewTargetRepository(dbClient)
@@ -31,11 +35,12 @@ func New(cfg config.Config, dbClient *db.Client) *Server {
 
 	engine.GET("/healthz", handlers.HealthCheck)
 	engine.GET("/readyz", handlers.ReadinessCheck(dbClient))
+	engine.GET("/ws", handlers.ServeWebSocket(hub))
 
 	api := engine.Group("/api/v1")
 	{
 		api.GET("/health", handlers.HealthCheck)
-		api.POST("/telemetry", handlers.IngestTelemetry(telemetryRepo))
+		api.POST("/telemetry", handlers.IngestTelemetry(telemetryRepo, hub))
 		api.GET("/targets/current", handlers.GetCurrentTargets(targetRepo))
 		api.GET("/targets/:host/history", handlers.GetTargetHistory(telemetryRepo))
 		api.GET("/targets/:host/traceroute/latest", handlers.GetLatestTraceroute(tracerouteRepo))
