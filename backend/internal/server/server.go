@@ -27,6 +27,7 @@ func New(cfg config.Config, dbClient *db.Client) *Server {
 	telemetryRepo := repository.NewTelemetryRepository(cfg, dbClient)
 	alertRepo := repository.NewAlertRepository(dbClient)
 	targetRepo := repository.NewTargetRepository(dbClient)
+	tracerouteRepo := repository.NewTracerouteRepository(dbClient)
 
 	engine.GET("/healthz", handlers.HealthCheck)
 	engine.GET("/readyz", handlers.ReadinessCheck(dbClient))
@@ -37,6 +38,7 @@ func New(cfg config.Config, dbClient *db.Client) *Server {
 		api.POST("/telemetry", handlers.IngestTelemetry(telemetryRepo))
 		api.GET("/targets/current", handlers.GetCurrentTargets(targetRepo))
 		api.GET("/targets/:host/history", handlers.GetTargetHistory(telemetryRepo))
+		api.GET("/targets/:host/traceroute/latest", handlers.GetLatestTraceroute(tracerouteRepo))
 		api.GET("/alerts/current", handlers.GetCurrentAlerts(alertRepo))
 	}
 
