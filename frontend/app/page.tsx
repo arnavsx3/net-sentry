@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { getCurrentAlerts, getCurrentTargets } from "@/lib/api";
 
 function formatDate(value: string | null) {
@@ -66,17 +68,14 @@ export default async function HomePage() {
         </section>
 
         <section className="space-y-5">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-white">
-              Current Targets
-            </h2>
-          </div>
+          <h2 className="text-2xl font-semibold text-white">Current Targets</h2>
 
           <div className="grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
             {targetsData.targets.map((target) => (
-              <article
+              <Link
                 key={target.target_host}
-                className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl shadow-black/20">
+                href={`/targets/${encodeURIComponent(target.target_host)}`}
+                className="rounded-3xl border border-slate-800 bg-slate-900 p-6 shadow-2xl shadow-black/20 transition hover:border-cyan-500/50 hover:bg-slate-900/90">
                 <div className="mb-5 flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs uppercase tracking-[0.2em] text-slate-500">
@@ -119,28 +118,7 @@ export default async function HomePage() {
                   <p>Last observed: {formatDate(target.observed_at)}</p>
                   <p>Active alerts: {target.active_alert_count}</p>
                 </div>
-
-                <div className="mt-5 space-y-3">
-                  {target.active_alerts.length > 0 ? (
-                    target.active_alerts.map((alert, index) => (
-                      <div
-                        key={`${target.target_host}-${alert.type}-${index}`}
-                        className="rounded-2xl border border-slate-800 bg-slate-800/50 p-4">
-                        <p className="text-sm font-semibold text-white">
-                          {alert.type} · {alert.severity}
-                        </p>
-                        <p className="mt-2 text-sm leading-6 text-slate-400">
-                          {alert.message}
-                        </p>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="rounded-2xl border border-dashed border-slate-700 p-4 text-sm text-slate-500">
-                      No active alerts.
-                    </div>
-                  )}
-                </div>
-              </article>
+              </Link>
             ))}
           </div>
         </section>
