@@ -1,6 +1,6 @@
 import Link from "next/link";
-
 import { getCurrentAlerts, getCurrentTargets } from "@/lib/api";
+import LiveFeed from "@/app/components/live-feed";
 
 function formatDate(value: string | null) {
   if (!value) return "No data yet";
@@ -122,6 +122,8 @@ export default async function HomePage() {
             ))}
           </div>
         </section>
+
+        <LiveFeed />
 
         <section className="space-y-5">
           <h2 className="text-2xl font-semibold text-white">Current Alerts</h2>
