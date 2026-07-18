@@ -48,6 +48,34 @@ export type CurrentAlertsResponse = {
   alerts: CurrentAlertItem[];
 };
 
+export type TargetHistoryItem = {
+  observed_at: string;
+  latency_ms: number;
+  packet_loss: number;
+  status: "healthy" | "degraded" | "down";
+};
+
+export type TargetHistoryResponse = {
+  count: number;
+  target_host: string;
+  results: TargetHistoryItem[];
+};
+
+export type TracerouteHop = {
+  hop: number;
+  address: string;
+  rtt_ms: number;
+};
+
+export type LatestTracerouteResponse = {
+  target_host: string;
+  observed_at: string | null;
+  probe_status: string;
+  latency_ms: number;
+  packet_loss: number;
+  hops: TracerouteHop[];
+};
+
 export async function getCurrentTargets() {
   const { data } = await api.get<CurrentTargetsResponse>("/targets/current", {
     params: { limit: 50 },
@@ -59,5 +87,20 @@ export async function getCurrentAlerts() {
   const { data } = await api.get<CurrentAlertsResponse>("/alerts/current", {
     params: { limit: 20 },
   });
+  return data;
+}
+
+export async function getTargetHistory(host: string) {
+  const { data } = await api.get<TargetHistoryResponse>(
+    `/targets/${encodeURIComponent(host)}/history`,
+    { params: { limit: 20 } },
+  );
+  return data;
+}
+
+export async function getLatestTraceroute(host: string) {
+  const { data } = await api.get<LatestTracerouteResponse>(
+    `/targets/${encodeURIComponent(host)}/traceroute/latest`,
+  );
   return data;
 }
