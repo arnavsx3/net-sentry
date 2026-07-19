@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const api = axios.create({
+export const api = axios.create({
   baseURL:
     process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8080/api/v1",
   timeout: 10000,
@@ -74,6 +74,20 @@ export type LatestTracerouteResponse = {
   latency_ms: number;
   packet_loss: number;
   hops: TracerouteHop[];
+};
+
+export type TelemetryEvent = {
+  type: "telemetry.received";
+  timestamp: string;
+  payload: {
+    agent_id: string;
+    target_host: string;
+    observed_at: string;
+    status: "healthy" | "degraded" | "down";
+    latency_ms: number;
+    packet_loss: number;
+    trace: TracerouteHop[];
+  };
 };
 
 export async function getCurrentTargets() {
