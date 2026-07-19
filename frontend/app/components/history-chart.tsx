@@ -30,15 +30,19 @@ function formatTick(value: string) {
   });
 }
 
-function formatTooltipLabel(value: string) {
-  return new Date(value).toLocaleString();
+function formatTooltipLabel(label: unknown) {
+  if (typeof label !== "string") {
+    return "";
+  }
+
+  return new Date(label).toLocaleString();
 }
 
 export default function HistoryChart({ data }: Props) {
   const chartData = [...data].reverse();
 
   return (
-    <div className="h-[320px] w-full rounded-3xl border border-slate-800 bg-slate-900 p-4">
+    <div className="h-80 w-full rounded-3xl border border-slate-800 bg-slate-900 p-4">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={chartData}>
           <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" />
