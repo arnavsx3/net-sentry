@@ -12,3 +12,15 @@ import {
   TelemetryEvent,
   api,
 } from "@/lib/api";
+
+const WS_URL = process.env.NEXT_PUBLIC_WS_URL ?? "ws://localhost:8080/ws";
+
+type Props = {
+  initialTargets: CurrentTargetsResponse;
+  initialAlerts: CurrentAlertsResponse;
+};
+
+function formatDate(value: string | null) {
+  if (!value) return "No data yet";
+  return new Date(value).toLocaleString();
+}
