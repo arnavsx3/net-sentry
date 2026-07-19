@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
 import { getLatestTraceroute, getTargetHistory } from "@/lib/api";
+import HistoryChart from "@/app/components/history-chart";
 
 type Props = {
   params: Promise<{
@@ -87,6 +87,19 @@ export default async function TargetDetailsPage({ params }: Props) {
               {formatDate(tracerouteData.observed_at)}
             </h2>
           </div>
+        </section>
+
+        <section className="space-y-5">
+          <h2 className="text-2xl font-semibold text-white">
+            Latency and Packet Loss Trend
+          </h2>
+          {historyData.results.length === 0 ? (
+            <div className="rounded-3xl border border-slate-800 bg-slate-900 p-6 text-slate-400">
+              No history available yet.
+            </div>
+          ) : (
+            <HistoryChart data={historyData.results} />
+          )}
         </section>
 
         <section className="space-y-5">
