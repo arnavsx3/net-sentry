@@ -24,3 +24,22 @@ function formatDate(value: string | null) {
   if (!value) return "No data yet";
   return new Date(value).toLocaleString();
 }
+
+function statusClasses(status: string) {
+  switch (status) {
+    case "healthy":
+      return "bg-emerald-100 text-emerald-700";
+    case "degraded":
+      return "bg-amber-100 text-amber-700";
+    case "down":
+      return "bg-rose-100 text-rose-700";
+    default:
+      return "bg-slate-100 text-slate-600";
+  }
+}
+
+function severityClasses(severity: string) {
+  return severity === "critical"
+    ? "bg-rose-100 text-rose-700"
+    : "bg-amber-100 text-amber-700";
+}
