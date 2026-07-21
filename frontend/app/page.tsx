@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import DashboardClient from "@/app/components/dashboard-client";
 import { getCurrentAlerts, getCurrentTargets } from "@/lib/api";
 
